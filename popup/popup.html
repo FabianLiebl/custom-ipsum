@@ -1,8 +1,36 @@
 <html>
+<head>
+    <link rel="stylesheet" href="popup.css">
+</head>
 <body>
-    <h1>Here's some Lorem and some Ipsum as well:</h1>
-    <div>
-        <textarea id="text">Lorem ipsum dolor sit amet</textarea>
+    <div class="block">
+        <h1>Custom Ipsum</h1>
+    </div>
+    <div class="block">
+        <h2>Currently stored <span data-num-total></span> Ipsum Records to use</h2>
+    </div>
+    <div class="block">
+        <h2>Add Ipsum Record:</h2>
+        <div class="add-ipsum-form">
+            <div class="form-row">
+                <select data-new-ipsum-type>
+                    <option value="textarea" selected>Multiple lines (Textarea)</option>
+                    <option value="input">Single line (Input)</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <textarea data-new-ipsum-text></textarea>
+            </div>
+            <div class="form-row">
+                <button data-add-ipsum>Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="block">
+        <h2>Currently stored Ipsum Records:</h2>
+        <ul class="ipsum-records-list" data-ipsum-list>
+
+        </ul>
     </div>
     <script src="popup.js"></script>
 </body>
