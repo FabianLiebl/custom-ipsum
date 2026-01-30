@@ -1,6 +1,6 @@
 {
   "name": "Custom Ipsum",
-  "description": "Lorem Ipsum extension",
+  "description": "Simple Chrome Extension to quickly fill input fields with customizable placeholder text.",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": [
