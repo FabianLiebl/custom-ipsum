@@ -26,7 +26,6 @@
 }
 
 .ipsum-records-list {
-    max-height: 300px;
     padding: 0 5px;
     list-style: none; overflow-y: auto;
 }
@@ -48,4 +47,25 @@
 }
 .ipsum-records-list li .delete:hover {
     font-weight: bold;
+}
+
+.collapsable {}
+.collapsable .collapse-head {
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+}
+.collapsable .collapse-head .collapse-button {
+    display: flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    transform: scaleY(-1);
+}
+.collapsable .collapse-body {
+    display: none;
+
+}
+.collapsable.open .collapse-head .collapse-button {
+    transform: scaleY(1);
+}
+.collapsable.open .collapse-body {
+    display: block;
 }

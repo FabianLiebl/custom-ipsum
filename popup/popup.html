@@ -9,28 +9,39 @@
     <div class="block">
         <h2>Currently stored <span data-num-total></span> Ipsum Records to use</h2>
     </div>
-    <div class="block">
-        <h2>Add Ipsum Record:</h2>
-        <div class="add-ipsum-form">
-            <div class="form-row">
-                <select data-new-ipsum-type>
-                    <option value="textarea" selected>Multiple lines (Textarea)</option>
-                    <option value="input">Single line (Input)</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <textarea data-new-ipsum-text></textarea>
-            </div>
-            <div class="form-row">
-                <button data-add-ipsum>Add</button>
+    <div class="block collapsable" data-collapsable="form">
+        <div class="collapse-head" data-collapsable-button="form">
+            <h2>Add Ipsum Record</h2>
+            <div class="collapse-button">^</div>
+        </div>
+        <div class="collapse-body">
+            <div class="add-ipsum-form">
+                <div class="form-row">
+                    <select data-new-ipsum-type>
+                        <option value="textarea" selected>Multiple lines (Textarea)</option>
+                        <option value="input">Single line (Input)</option>
+                        <option value="email">Email</option>
+                        <option value="number">Number</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <textarea data-new-ipsum-text></textarea>
+                </div>
+                <div class="form-row">
+                    <button data-add-ipsum>Add</button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="block">
-        <h2>Currently stored Ipsum Records:</h2>
-        <ul class="ipsum-records-list" data-ipsum-list>
-
-        </ul>
+    <div class="block collapsable" data-collapsable="list">
+        <div class="collapse-head" data-collapsable-button="list">
+            <h2>Currently stored Ipsum Records</h2>
+            <div class="collapse-button">^</div>
+        </div>
+        <div class="collapse-body">
+            <ul class="ipsum-records-list" data-ipsum-list>
+            </ul>
+        </div>
     </div>
     <script src="popup.js"></script>
 </body>

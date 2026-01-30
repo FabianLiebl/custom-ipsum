@@ -1,3 +1,5 @@
+const DEBUG_OUTPUT = true;
+
 // region init
 
 let initPort = chrome.runtime.connect({
@@ -7,10 +9,10 @@ let initPort = chrome.runtime.connect({
 initPort.onMessage.addListener(function(msg) {
     if (msg.hasOwnProperty('messageType')) {
         if (msg.messageType === 'custom-ipsum-records') {
-            console.log('Received records');
-            console.log(msg.payload);
+            if (DEBUG_OUTPUT) { console.log('Received records'); }
+            if (DEBUG_OUTPUT) { console.log(msg.payload); }
 
-            updateRecords(msg);
+            updateRecords(msg.payload);
 
             initPort.disconnect();
         }
@@ -49,10 +51,10 @@ document.querySelector('[data-add-ipsum]').addEventListener('click', () => {
                 });
             }
             if (msg.messageType === 'custom-ipsum-records') {
-                console.log('Received records');
-                console.log(msg.payload);
+                if (DEBUG_OUTPUT) { console.log('Received records'); }
+                if (DEBUG_OUTPUT) { console.log(msg.payload); }
 
-                updateRecords(msg);
+                updateRecords(msg.payload);
 
                 port.disconnect();
             }
@@ -86,10 +88,10 @@ window.addEventListener('click', (event) => {
                     });
                 }
                 if (msg.messageType === 'custom-ipsum-records') {
-                    console.log('Received records');
-                    console.log(msg.payload);
+                    if (DEBUG_OUTPUT) { console.log('Received records'); }
+                    if (DEBUG_OUTPUT) { console.log(msg.payload); }
 
-                    updateRecords(msg);
+                    updateRecords(msg.payload);
 
                     port.disconnect();
                 }
@@ -105,17 +107,31 @@ window.addEventListener('click', (event) => {
 
 // endregion
 
-function updateRecords(msg)
+// region collapsable
+
+const collapsables = document.querySelectorAll('[data-collapsable-button]');
+for(let i = 0; i < collapsables.length; i++) {
+    collapsables[i].addEventListener('click', (event) => {
+        const name = event.target.closest('[data-collapsable-button]').dataset.collapsableButton;
+        console.log('Collapsable button clicked: ' + name + '');
+        const target = document.querySelector('[data-collapsable="' + name + '"]');
+        target.classList.toggle('open');
+    });
+}
+
+// endregion
+
+function updateRecords(records)
 {
-    document.querySelector('[data-num-total]').innerHTML = msg.payload.length;
+    document.querySelector('[data-num-total]').innerHTML = records.length;
 
     const target = document.querySelector('[data-ipsum-list]');
     target.innerHTML = '';
-    for(let i = 0; i < msg.payload.length; i++) {
+    for(let i = 0; i < records.length; i++) {
         target.innerHTML += '<li>'
             + '<div class="delete" data-delete-record="' + i + '">X</div>'
-            + '<div class="type">Type: ' + msg.payload[i].type + '</div>'
-            + '<div class="text">' + msg.payload[i].text + '</div>'
+            + '<div class="type">Type: ' + records[i].type + '</div>'
+            + '<div class="text">' + records[i].text + '</div>'
             + '</li>'
     }
 }
