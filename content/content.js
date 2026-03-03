@@ -54,6 +54,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             } else {
                 clickedElement.value += message.payload;
             }
+            clickedElement.dispatchEvent(new Event('input', {bubbles: true}));
         } else if (clickedElementFillType === 'html') {
             const editableTarget = clickedElement.closest('[contenteditable=true]');
             if (editableTarget !== null) {
@@ -70,7 +71,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 });
 
 window.addEventListener('click', function(event){
-    if (event.altKey && event.ctrlKey) {
+    if (event.altKey) {
         if ((event.target.nodeName === 'INPUT' && event.target.type === 'text')
             || (event.target.nodeName === 'INPUT' && event.target.type === 'email')
             || (event.target.nodeName === 'INPUT' && event.target.type === 'number')
