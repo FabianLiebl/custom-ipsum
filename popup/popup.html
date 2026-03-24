@@ -14,7 +14,24 @@
         <div>
             <p>Activate fill action by using <b>Right click -&gt; Fill with Custom Ipsum</b> or by <b>ALT + clicking</b> on an input field.</p>
             <p>When activating the fill action, Custom Ipsum will <b>randomly choose one of the appropriate type of saved Ipsum Records</b> for the input field.</p>
-            <p>Supports HTML fields of type <b>Textarea</b>, <b>Input[type=text]</b>, <b>Input[type=email]</b>, <b>Input[type=number]</b> as well as some (but not all) <b>Richtext editor</b> types.</p>
+            <p>Supports fields of type <b>Textarea</b>, <b>Input[type=text]</b>, <b>Input[type=email]</b>, <b>Input[type=number]</b> as well as some (but not all) <b>Richtext editor</b> types.</p>
+            <p>If the options <b>Guess Email fields</b> or <b>Guess Url fields</b> are active, might decide to fill <b>Input[type=text]</b> fields with email-addresses or link-urls based on the fields' label/placeholder.</p>
+        </div>
+    </div>
+    <div class="block collapsable" data-collapsable="options">
+        <div class="collapse-head" data-collapsable-button="options">
+            <h2>Options</h2>
+            <div class="collapse-button">^</div>
+        </div>
+        <div class="collapse-body">
+            <div class="add-ipsum-form">
+                <div class="form-row">
+                    <label for="ipsum-guess-email"><input type="checkbox" id="ipsum-guess-email" data-option-guess-email> Guess Email fields by label/placeholder</label>
+                </div>
+                <div class="form-row">
+                    <label for="ipsum-guess-link"><input type="checkbox" id="ipsum-guess-link" data-option-guess-link> Guess Url fields by label/placeholder</label>
+                </div>
+            </div>
         </div>
     </div>
     <div class="block collapsable" data-collapsable="form">
@@ -30,6 +47,7 @@
                         <option value="input">Single line (Input)</option>
                         <option value="email">Email</option>
                         <option value="number">Number</option>
+                        <option value="link">Url</option>
                     </select>
                 </div>
                 <div class="form-row">
@@ -47,8 +65,18 @@
             <div class="collapse-button">^</div>
         </div>
         <div class="collapse-body">
-            <ul class="ipsum-records-list" data-ipsum-list>
-            </ul>
+            <div class="ipsum-records-list-container">
+                <div class="ipsum-records-list-filter">
+                    <div class="ipsum-record-filter active" data-filter-type="all">All</div>
+                    <div class="ipsum-record-filter" data-filter-type="input">Input</div>
+                    <div class="ipsum-record-filter" data-filter-type="textarea">Textarea</div>
+                    <div class="ipsum-record-filter" data-filter-type="email">Email</div>
+                    <div class="ipsum-record-filter" data-filter-type="number">Number</div>
+                    <div class="ipsum-record-filter" data-filter-type="link">Link</div>
+                </div>
+                <ul class="ipsum-records-list" data-ipsum-list>
+                </ul>
+            </div>
         </div>
     </div>
     <script src="popup.js"></script>

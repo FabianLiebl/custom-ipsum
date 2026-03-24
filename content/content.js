@@ -16,7 +16,23 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             if (clickedElement.nodeName === 'INPUT' && clickedElement.type === 'text') {
                 if (DEBUG_OUTPUT) { console.log('Custom Ipsum: Sending "input"'); }
                 clickedElementFillType = 'value';
-                sendResponse({value: 'input'});
+
+                let meta = {};
+                if (clickedElement.hasAttribute('placeholder')) {
+                    meta.placeholder = clickedElement.placeholder;
+                } else {
+                    meta.placeholder = null;
+                }
+                if (clickedElement.hasAttribute('id')) {
+                    const id = clickedElement.getAttribute('id');
+                    if (DEBUG_OUTPUT) { console.log('Custom Ipsum: Element has id ' + id); }
+                    const label = document.querySelector('label[for="' + id + '"]');
+                    if (label !== null) {
+                        if (DEBUG_OUTPUT) { console.log('Custom Ipsum: Found label for id ' + id); }
+                        meta.label = label.innerText;
+                    }
+                }
+                sendResponse({value: 'input', meta: meta});
             } else if (clickedElement.nodeName === 'INPUT' && clickedElement.type === 'email') {
                 if (DEBUG_OUTPUT) { console.log('Custom Ipsum: Sending "email"'); }
                 clickedElementFillType = 'value';

@@ -1,5 +1,5 @@
 .block {
-    width: 400px;
+    width: 450px;
     padding: 10px;
     border-top: 1px solid #ccc;
 }
@@ -21,38 +21,64 @@
     resize: vertical;
 }
 .add-ipsum-form .form-row button {
-    margin-left: auto;
+    width: 100%;
     padding: 2px 25px;
 }
 
-.ipsum-records-list {
+.ipsum-records-list-container {
     padding: 0 5px;
-    list-style: none; overflow-y: auto;
+    overflow-y: auto;
+}
+.ipsum-records-list-filter {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    padding: 5px 10px;
+}
+.ipsum-records-list-filter .ipsum-record-filter {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.ipsum-records-list-filter .ipsum-record-filter:hover {
+    background-color: #eee;
+}
+.ipsum-records-list-filter .ipsum-record-filter.active {
+    background-color: #eee;
+}
+.ipsum-records-list {
+    padding: 0;
+    list-style: none;
 }
 .ipsum-records-list li {
     position: relative;
     display: flex; flex-direction: column; gap: 10px;
-    padding: 5px 10px;
-    border-top: 1px solid #ccc;
+    padding: 0 10px 10px 10px; margin-bottom: 10px;
+    border: 2px solid #eee;
 }
-.ipsum-records-list li:first-child {
-    border-top: none;
+.ipsum-records-list li.filtered-out {
+    display: none;
+}
+.ipsum-records-list li .type {
+    margin: 0 -10px; padding: 5px 10px;
+    background-color: #eee;
 }
 .ipsum-records-list li .delete {
-    position: absolute; top: 5px; right: 5px;
+    position: absolute; top: 0; right: 5px;
     display: flex; justify-content: center; align-items: center;
     width: 20px; height: 20px;
-    font-size: 12px;
+    font-size: 12px; font-weight: bold;
     cursor: pointer;
 }
 .ipsum-records-list li .delete:hover {
-    font-weight: bold;
+    background-color: #ccc;
 }
 
 .collapsable {}
 .collapsable .collapse-head {
     display: flex; justify-content: space-between; align-items: center;
     cursor: pointer;
+    margin: 0 -10px; padding: 0 10px;
+}
+.collapsable .collapse-head:hover {
+    background-color: #eee;
 }
 .collapsable .collapse-head .collapse-button {
     display: flex; align-items: center; justify-content: center;
@@ -61,7 +87,7 @@
 }
 .collapsable .collapse-body {
     display: none;
-
+    padding: 15px 0;
 }
 .collapsable.open .collapse-head .collapse-button {
     transform: scaleY(1);

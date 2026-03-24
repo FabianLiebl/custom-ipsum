@@ -5,6 +5,9 @@ var ipsumRecordsInput = [];
 var ipsumRecordsTextarea = [];
 var ipsumRecordsEmail = [];
 var ipsumRecordsNumber = [];
+var ipsumRecordsLink = [];
+var guessEmail = true;
+var guessLink = true;
 
 initContextMenu();
 initInternalCommunication();
@@ -29,17 +32,31 @@ function initContextMenu()
 
 function loadStorage()
 {
-    return chrome.storage.local.get(['ipsum-records']).then((result) => {
-        if (DEBUG_OUTPUT) { console.log('Loading records from storage:'); }
-        if (DEBUG_OUTPUT) { console.log(result); }
-        if (result.hasOwnProperty('ipsum-records')) {
-            ipsumRecords = result['ipsum-records'];
-            sortIpsumRecords();
-        } else {
-            ipsumRecords = [];
-            ipsumRecordsInput = [];
-            ipsumRecordsTextarea = [];
-        }
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get(['ipsum-records']).then((result) => {
+            if (DEBUG_OUTPUT) { console.log('Loading records from storage:'); }
+            if (DEBUG_OUTPUT) { console.log(result); }
+            if (result.hasOwnProperty('ipsum-records')) {
+                ipsumRecords = result['ipsum-records'];
+                sortIpsumRecords();
+            } else {
+                ipsumRecords = [];
+                ipsumRecordsInput = [];
+                ipsumRecordsTextarea = [];
+                ipsumRecordsEmail = [];
+                ipsumRecordsNumber = [];
+                ipsumRecordsLink = [];
+            }
+            chrome.storage.local.get(['ipsum-options']).then((result) => {
+                if (result.hasOwnProperty('guess-email')) {
+                    guessEmail = result['guessEmail'];
+                }
+                if (result.hasOwnProperty('guess-link')) {
+                    guessLink = result['guessLink'];
+                }
+                resolve();
+            });
+        });
     });
 }
 
@@ -68,6 +85,19 @@ function initInternalCommunication()
                         });
                     });
                 }
+                if (msg.messageType === 'custom-ipsum-set-options') {
+                    loadStorage().then(() => {
+                        guessEmail = msg.payload.guessEmail;
+                        guessLink = msg.payload.guessLink;
+                        saveOptions()
+                            .then(() => {
+                                port.postMessage({
+                                    messageType: 'custom-ipsum-success',
+                                    payload: true,
+                                });
+                            });
+                    });
+                }
                 if (msg.messageType === 'custom-ipsum-get-records') {
                     loadStorage().then(() => {
                         if (DEBUG_OUTPUT) { console.log('Sending records'); }
@@ -75,6 +105,19 @@ function initInternalCommunication()
                         port.postMessage({
                             messageType: 'custom-ipsum-records',
                             payload: ipsumRecords,
+                        });
+                    });
+                }
+                if (msg.messageType === 'custom-ipsum-get-options') {
+                    loadStorage().then(() => {
+                        if (DEBUG_OUTPUT) { console.log('Sending options'); }
+                        if (DEBUG_OUTPUT) { console.log(ipsumRecords); }
+                        port.postMessage({
+                            messageType: 'custom-ipsum-options',
+                            payload: {
+                                guessEmail: guessEmail,
+                                guessLink: guessLink,
+                            },
                         });
                     });
                 }
@@ -99,6 +142,7 @@ function sortIpsumRecords()
     ipsumRecordsTextarea = [];
     ipsumRecordsEmail = [];
     ipsumRecordsNumber = [];
+    ipsumRecordsLink = [];
     for(let i = 0; i < ipsumRecords.length; i++) {
         if (ipsumRecords[i].type === 'input') {
             ipsumRecordsInput.push(ipsumRecords[i]);
@@ -108,6 +152,8 @@ function sortIpsumRecords()
             ipsumRecordsEmail.push(ipsumRecords[i]);
         } else if (ipsumRecords[i].type === 'number') {
             ipsumRecordsNumber.push(ipsumRecords[i]);
+        } else if (ipsumRecords[i].type === 'link') {
+            ipsumRecordsLink.push(ipsumRecords[i]);
         }
     }
 }
@@ -116,6 +162,17 @@ function saveIpsumRecords()
 {
     return chrome.storage.local.set({
         'ipsum-records': ipsumRecords
+    });
+}
+
+function saveOptions()
+{
+    if (DEBUG_OUTPUT) { console.log('Saving options: guessEmail = ' + (guessEmail ? 'true' : 'false') + ', guessLink = ' + (guessLink ? 'true' : 'false')); }
+    return chrome.storage.local.set({
+        'ipsum-options': {
+            guessEmail: guessEmail,
+            guessLink: guessLink,
+        }
     });
 }
 
@@ -164,11 +221,7 @@ function handleInsert(tabId, frameId)
             if (DEBUG_OUTPUT) { console.log('Got type ' + data.value); }
             let result = '';
             if (data.value === 'input') {
-                if (ipsumRecordsInput.length > 0) {
-                    result = ipsumRecordsInput[Math.floor(Math.random() * ipsumRecordsInput.length)].text;
-                } else {
-                    result = 'Lorem ipsum dolor sit amet';
-                }
+                result = handleInput(data.hasOwnProperty('meta') ? data.meta : null);
             }
             if (data.value === 'textarea') {
                 if (ipsumRecordsTextarea.length > 0) {
@@ -205,4 +258,69 @@ function handleInsert(tabId, frameId)
             }, {frameId: frameId});
         }
     });
+}
+
+function handleInput(meta)
+{
+    if (meta !== null) {
+        if (guessEmail && isEmail(meta)) {
+            if (ipsumRecordsEmail.length > 0) {
+                return ipsumRecordsEmail[Math.floor(Math.random() * ipsumRecordsEmail.length)].text;
+            } else {
+                return 'test@email.com';
+            }
+        }
+        if (guessLink && isLink(meta)) {
+            if (ipsumRecordsLink.length > 0) {
+                return ipsumRecordsLink[Math.floor(Math.random() * ipsumRecordsLink.length)].text;
+            } else {
+                return 'https://www.example.com';
+            }
+        }
+    }
+
+    if (ipsumRecordsInput.length > 0) {
+        return ipsumRecordsInput[Math.floor(Math.random() * ipsumRecordsInput.length)].text;
+    } else {
+        return 'Lorem ipsum dolor sit amet';
+    }
+}
+
+function isEmail(meta)
+{
+    if (meta.hasOwnProperty('placeholder') && meta.placeholder) {
+        if (meta.placeholder.toLowerCase().includes('email')
+            || meta.placeholder.toLowerCase().includes('e-mail')
+        ) {
+            return true;
+        }
+    }
+    if (meta.hasOwnProperty('label') && meta.label) {
+        if (meta.label.toLowerCase().includes('email')
+            || meta.label.toLowerCase().includes('e-mail')
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function isLink(meta)
+{
+    if (meta.hasOwnProperty('placeholder') && meta.placeholder) {
+        if (meta.placeholder.toLowerCase().includes('link')
+            || meta.placeholder.toLowerCase().includes('url')
+            || meta.placeholder.toLowerCase().match(/^https?:/)
+        ) {
+            return true;
+        }
+    }
+    if (meta.hasOwnProperty('label') && meta.label) {
+        if (meta.label.toLowerCase().includes('link')
+            || meta.label.toLowerCase().includes('url')
+        ) {
+            return true;
+        }
+    }
+    return false;
 }
